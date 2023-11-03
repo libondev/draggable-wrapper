@@ -26,12 +26,12 @@
     "release": "bumpp && npm publish",
     "fix": "eslint src/** --ext .js,.ts,.cjs --fix"
   },
-  "author": "banlify <banlify@163.com>",
-  "bugs": "https://github.com/banlify/draggable-wrapper/issues",
-  "homepage": "https://github.com/banlify/draggable-wrapper#readme",
+  "author": "Libon <bon.li@outlook.com>",
+  "bugs": "https://github.com/libondev/draggable-wrapper/issues",
+  "homepage": "https://github.com/libondev/draggable-wrapper#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/banlify/draggable-wrapper.git"
+    "url": "git+https://github.com/libondev/draggable-wrapper.git"
   },
   "volta": {
     "node": "16.18.0"
