@@ -4,20 +4,34 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Draggable wrapper</title>
   <style>
     body,
     html,
     #app {
       margin: 0;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
     }
 
+    .wrapper {
+      width: 400px;
+      height: 300px;
+      background: #ace;
+      border: 2px solid red;
+      box-sizing: border-box;
+    }
   </style>
 </head>
 <body>
   <div id="app">
-    12313131123
+    <div class="container">
+      <div class="wrapper">
+        resizable draggable panel
+      </div>
+    </div>
   </div>
 
   <script type="module" src="/src/dev.ts"></script>

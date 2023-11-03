@@ -1,95 +1,70 @@
+
+import { initEvents } from './events'
+import { setContainerStyle, createContext, setWrapperStyle, createHelperBar } from './helper'
 import './style.css'
 
 export interface UserOptions {
-  container?: HTMLElement
+  el: string | HTMLElement
 
   scaleSize?: number
+  /** 是否允许超出边界 */
+  allowOverflow?: boolean
+  minScale?: number
 }
 
-type PluginOptions = Required<UserOptions>
-
-type Position = Record<'x' | 'y', number>
-
-let scaleRate = 1
-
-let downPosition: Position
-
-let prevPosition: Position = { x: 0, y: 0 }
-
-function createWrapper (userOptions?: UserOptions) {
+function createWrapper (userOptions: UserOptions) {
   const {
-    container,
-    scaleSize
-  }: PluginOptions = Object.assign({
-    container: document.body,
-    scaleSize: 0.25
-  }, userOptions)
+    el
+  } = userOptions
 
-  const BODY = document.body
+  const oContainer = typeof el === 'string'
+    ? document.querySelector<HTMLElement>(el)!
+    : el
 
-  const onPointerDown = (ev: PointerEvent) => {
-    const { clientX, clientY, buttons, ctrlKey, shiftKey, altKey } = ev
-
-    // 鼠标中键
-    if (ctrlKey || shiftKey || altKey || buttons !== 1) {
-      return
-    }
-
-    ev.preventDefault()
-
-    downPosition = { x: clientX, y: clientY }
-
-    BODY.addEventListener('pointermove', onPointerMove, { passive: true })
-    BODY.addEventListener('pointerup', onPointerUp, { once: true })
+  if (!('innerHTML' in oContainer)) {
+    throw new TypeError(`'el' expect a selector or a HTML element, but got: ${el}`)
   }
 
-  const onPointerMove = ({ clientX, clientY }: PointerEvent) => {
-    const offsetX = clientX - downPosition.x
-    const offsetY = clientY - downPosition.y
+  const oWrapper = oContainer.firstElementChild as HTMLElement
 
-    container.style.transform = `translate3d(${prevPosition.x + offsetX}px, ${prevPosition.y + offsetY}px, 0)`
+  if (!oWrapper || oContainer.children.length > 1) {
+    throw new Error('Container should have one child element')
   }
 
-  const onPointerUp = () => {
-    const [, x, y] = container.style.transform.match(/translate3d\((.+?)px, (.+?)px, 0px\)/) ?? []
+  setContainerStyle(oContainer)
+  setWrapperStyle(oWrapper, {
+    transformOrigin: 'center center'
+  })
 
-    prevPosition = { x: ~~x, y: ~~y }
+  const {
+    oBar,
+    oMinusBtn,
+    oPlusBtn,
+    oScale,
+    oBackBtn
+  } = createHelperBar()
+  oContainer.appendChild(oBar)
 
-    BODY.removeEventListener('pointermove', onPointerMove)
-  }
+  const context = createContext(
+    userOptions,
+    oContainer,
+    oWrapper,
+    oMinusBtn,
+    oPlusBtn,
+    oScale,
+    oBackBtn
+  )
 
-  const onPointerWheel = (ev: WheelEvent) => {
-    const { deltaY, shiftKey, ctrlKey } = ev
-
-    if (ctrlKey || shiftKey) return
-
-    if (deltaY >= 0) {
-      scaleRate = Math.max(scaleRate - scaleSize, 0.25)
-    } else {
-      scaleRate = Math.min(scaleRate + scaleSize, 3)
-    }
-
-    container.style.zoom = scaleRate
-  }
-
-  const initial = () => {
-    BODY.addEventListener('wheel', onPointerWheel)
-    BODY.addEventListener('pointerdown', onPointerDown)
-
-    if (container.parentNode != null) {
-      (container.parentNode as HTMLElement).classList.add('overflow-hidden')
-    }
-  }
+  const removeEvents = initEvents(context, userOptions)
 
   const destroy = () => {
-    BODY.removeEventListener('wheel', onPointerWheel)
-    BODY.removeEventListener('pointermove', onPointerMove)
+    removeEvents()
+    oContainer.removeChild(oBar)
+    oContainer.style.cssText = ''
+    oWrapper.style.cssText = ''
   }
 
-  initial()
-
   return {
-    initial,
     destroy
   }
 }
