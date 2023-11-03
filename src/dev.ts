@@ -1,7 +1,8 @@
 import createWrapper from './index'
 
-const container = document.querySelector('#app') as HTMLElement
+const container = document.querySelector('.container') as HTMLElement
 
 createWrapper({
-  container
+  el: container,
+  allowOverflow: true
 })
