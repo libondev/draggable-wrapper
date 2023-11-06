@@ -3,7 +3,8 @@ import { type Context, handleWrapperMove, parseMatrix } from './helper'
 
 export const initEvents = (context: Context, userOptions: UserOptions) => {
   const {
-    container
+    container,
+    wrapper
   } = context
 
   const {
@@ -102,7 +103,15 @@ export const initEvents = (context: Context, userOptions: UserOptions) => {
     context.scale = 1
   }
   const onBackBtnClick = () => {
-    context.translate()
+    const {
+      originMatrix: [,,,,left, top],
+      scale
+    } = context
+
+    context.translate(
+      left * scale,
+      top * scale
+    )
   }
 
   container.addEventListener('mouseenter', onMouseEnter)
@@ -117,6 +126,18 @@ export const initEvents = (context: Context, userOptions: UserOptions) => {
   context.plusBtn.addEventListener('click', onPlusBtnClick)
   context.scaleText.addEventListener('click', onScaleTextClick)
   context.backBtn.addEventListener('click', onBackBtnClick)
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.intersectionRatio <= 0) {
+        context.backBtn.style.display = 'block'
+      } else {
+        context.backBtn.style.display = 'none'
+      }
+    })
+  })
+
+  observer.observe(wrapper)
 
   const destroy = () => {
     container.removeEventListener('mouseenter', onMouseEnter)
