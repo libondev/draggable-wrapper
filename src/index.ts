@@ -9,6 +9,7 @@ export interface Position {
   left: number
   top: number
 }
+
 export interface UserOptions {
   el: string | HTMLElement
 
