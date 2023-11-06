@@ -80,7 +80,7 @@ export const createContext = (
 
       scaleText.textContent = `${Math.floor(this.scale * 100)}%`
 
-      userOptions?.onChange && userOptions.onChange('scale', this.scale)
+      userOptions?.onChange?.('scale', this.scale)
     },
 
     get actualSize () {
@@ -106,8 +106,6 @@ export const createContext = (
     translate (x = 0, y = 0) {
       const {
         currentMatrix,
-        actualSize,
-        containerSize,
         wrapper
       } = this
     
@@ -119,18 +117,7 @@ export const createContext = (
         ].join(',')
       })`
 
-      if (
-        x >= containerSize.width ||
-        y >= containerSize.height ||
-        x + actualSize.width <= 0 ||
-        y + actualSize.height <= 0
-      ) {
-        backBtn.style.display = 'block'
-      } else {
-        backBtn.style.display = 'none'
-      }
-
-      userOptions?.onChange && userOptions.onChange('position', { left: x, top: y })
+      userOptions?.onChange?.('position', { left: x, top: y })
     },
 
     resize () {
