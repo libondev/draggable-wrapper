@@ -1,4 +1,4 @@
-import type { UserOptions } from './index'
+import type { UserOptions, Position } from './index'
 
 export interface Size {
   width: number
@@ -6,11 +6,6 @@ export interface Size {
 }
 
 type Matrix = [number, number, number, number, number, number]
-
-interface Position {
-  left: number
-  top: number
-}
 
 export interface Context {
   container: HTMLElement
@@ -84,6 +79,8 @@ export const createContext = (
       })
 
       scaleText.textContent = `${Math.floor(this.scale * 100)}%`
+
+      userOptions?.onChange && userOptions.onChange('scale', this.scale)
     },
 
     get actualSize () {
@@ -132,6 +129,8 @@ export const createContext = (
       } else {
         backBtn.style.display = 'none'
       }
+
+      userOptions?.onChange && userOptions.onChange('position', { left: x, top: y })
     },
 
     resize () {

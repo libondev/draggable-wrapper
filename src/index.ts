@@ -3,6 +3,12 @@ import { initEvents } from './events'
 import { setContainerStyle, createContext, setWrapperStyle, createHelperBar } from './helper'
 import './style.css'
 
+export type ChangeType = 'scale' | 'position'
+
+export interface Position {
+  left: number
+  top: number
+}
 export interface UserOptions {
   el: string | HTMLElement
 
@@ -10,6 +16,8 @@ export interface UserOptions {
   /** 是否允许超出边界 */
   allowOverflow?: boolean
   minScale?: number
+
+  onChange?: (type: ChangeType, value: number | Position) => void
 }
 
 function createWrapper (userOptions: UserOptions) {
